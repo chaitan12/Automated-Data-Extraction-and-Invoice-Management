@@ -1,77 +1,65 @@
 # Automated-Data-Extraction-and-Invoice-Management
 
-Swipe Invoice Automation is a generic AI-powered system designed to extract structured Invoice, Product, and Customer information from uploaded files such as Excel, PDF, and Image invoices. The extracted data is automatically organized and displayed across dedicated tabs in the application UI.
+👉Project Objective
 
-The solution is built to handle real-world invoice inconsistencies, missing fields, and varying file formats while maximizing successful extraction across different test cases.
+The goal of this project is to extract Invoice, Product, and Customer details and update them in their respective tabs using a generic AI-based solution.
 
-#Objective
+If any required information is missing from the uploaded file (which is true for some test cases), the system must:
 
-The primary goal of this project is to:
+Handle the case safely without crashing
 
-Extract Invoice details
-Extract Product details
-Extract Customer details
+Highlight missing information in the application
 
-and populate them into their respective tabs in the application interface using a generic AI-based solution.
+Still return a valid and usable response
 
-If any required information is missing from the uploaded file, the system must still process the file and clearly highlight missing data instead of failing.
+👉Supported File Types
 
-#Supported File Types
+This application supports three invoice formats:
 
-The application supports the following input formats:
+Excel files (.xls, .xlsx)
+Processed using rule-based parsing for speed and accuracy.
 
-Excel files (.xlsx, .xls)
-PDF invoices
-Invoice images (.jpg, .png, etc.)
+PDF files
+Processed using AI-based document understanding.
 
-Each format is processed using the most reliable approach for that file type.
+Image files (.jpg, .png)
+Processed using AI-based OCR and semantic extraction.
 
-How the System Works
-Excel Files
+👉 System Design
 
-Excel files are processed locally without AI to ensure speed, reliability, and accuracy.
+The system follows a hybrid extraction approach:
 
-The system:
+Structured files (Excel) are handled without AI to avoid latency and hallucinations.
 
-Detects available column headers dynamically
+Unstructured files (PDF and Images) are processed using an AI vision model.
 
-Maps invoice-level data such as serial number, date, tax, and total amount
+All outputs are normalized into a single consistent JSON schema so the frontend never breaks.
 
-Groups customers correctly even if products are missing
+👉 Unified Output Structure
 
-Safely handles missing product data by assigning a default placeholder
+Every upload returns data in the same format:
 
-Prevents crashes caused by invalid or missing numeric values
+invoices
 
-If product-level information is not present in the Excel file, the system still creates valid invoices and customers while clearly indicating that product details are unavailable.
+products
 
-PDF and Image Files
+customers
 
-PDFs and images are processed using an AI-based extraction pipeline.
+This guarantees that:
 
-The AI:
+All UI tabs always render
 
-Reads invoice text and layout
+No conditional frontend logic is required
 
-Extracts invoice numbers, dates, totals, and tax
+Missing data never causes runtime errors
 
-Identifies line items and quantities
+🧾 Invoice Data
 
-Detects customer names and phone numbers (even when labeled as MOBILE, PHONE, CONTACT, etc.)
+The invoice section extracts:
 
-Infers missing product names when possible
+Invoice number
 
-If certain fields cannot be reliably extracted, the system still returns partial data and marks missing fields clearly.
-
-Application UI Behavior
-
-The application displays extracted data across three tabs:
-
-Invoices Tab
-
-Shows all extracted invoice entries with:
-
-Serial number
+Date
 
 Customer name
 
@@ -83,105 +71,150 @@ Tax
 
 Total amount
 
-Date
+If any of these fields are missing:
 
-Missing fields are shown as empty or default values instead of breaking the UI.
+Quantity defaults to 1
 
-Products Tab
+Tax defaults to 0
 
-Displays aggregated product information when available:
+Product name is inferred or replaced with a fallback value
+
+👉Product Data
+
+The product section shows:
 
 Product name
 
 Total quantity
 
-Unit price (if available)
+Unit price
 
 Tax
 
-Price with tax
+Price including tax
 
-If product data is missing from the source file, the UI clearly indicates that no product details are available.
+If product-level data is not present:
 
-Customers Tab
+Products are derived from invoice totals
 
-Shows customer-level information:
+Quantities and prices are aggregated automatically
+
+👤 Customer Data
+
+The customer section includes:
 
 Customer name
 
-Phone number (if available)
+Phone number
 
 Total purchase amount
 
-When phone numbers are missing or unreadable, they are displayed as unavailable instead of incorrect values.
+Phone numbers are extracted from:
 
-Handling Missing or Incomplete Data
+Mobile
 
-This project is designed to handle incomplete invoices gracefully.
+Phone
 
-Examples of supported scenarios:
+Contact
 
-Excel files without product columns
+Numeric fallback detection
 
-Invoices without phone numbers
+If the phone number is missing, it is displayed clearly as unavailable.
 
-PDFs with unclear line items
+👉 Missing Data Handling
 
-Images with partial text visibility
+This project is built to support incomplete invoices.
 
-In all such cases:
+When data is missing:
 
-The system continues processing
+Product names are replaced with a safe fallback
 
-Partial data is still displayed
+Quantity defaults to 1
 
-Missing fields are highlighted instead of causing failures
+Tax defaults to 0
 
-Error Handling and Stability
+Phone numbers are shown as missing
 
-The backend includes multiple safety mechanisms:
+Customer names fall back to a generic label
 
-Numeric sanitization to prevent JSON serialization errors
+Missing values are explicitly visible in the UI, fulfilling the requirement to highlight missing information.
 
-Protection against NaN and infinite values
+🛡️ Reliability and Error Handling
 
-Safe defaults for missing fields
+The system ensures:
 
-Controlled retries for AI calls
+No NaN or Infinity values in API responses
 
-Clear error messages when files cannot be processed
+JSON-safe output at all times
 
-The goal is to maximize successful extraction rather than reject files.
+Graceful handling of AI failures
 
-Technology Stack
+Stable responses even for poorly structured invoices
 
-Frontend:
+🧪 Test Case Coverage
 
-Modern UI with tab-based navigation
+The system successfully handles:
 
-Visual feedback for missing data
+Fully structured Excel invoices
+
+Excel files without product breakdowns
+
+Summary-only invoices
+
+Clear PDFs and images
+
+Invoices with missing phone numbers
+
+Invoices with missing tax or quantity
+
+Mixed and inconsistent formats
+
+The goal is not perfection, but maximum successful extraction across real-world cases.
+
+🚀 Technology Stack
 
 Backend:
 
 FastAPI
 
-Pandas for Excel processing
+Pandas
 
-Google Gemini for AI-based extraction
+Google Gemini Vision API
 
-Robust normalization and validation logic
+Python
 
-Key Strengths
+Frontend:
 
-Generic solution that works across multiple invoice formats
-Graceful handling of missing or inconsistent data
-Clear separation of Invoice, Product, and Customer information
-Fast Excel processing without AI dependency
-AI-powered extraction for complex PDFs and images
-Stable JSON output suitable for UI rendering
+React
 
-Conclusion
+Tab-based UI for Invoices, Products, and Customers
 
-Swipe Invoice Automation focuses on solving real-world invoice extraction challenges rather than ideal scenarios. The system prioritizes robustness, clarity, and user experience by ensuring that as many cases as possible are successfully processed, even when information is missing or incomplete.
+Clear indicators for missing data
 
-This makes the solution practical, scalable, and suitable for real business workflows.
+ Why This Is a Generic AI-Based Solution
+
+AI is used only where structure is missing
+
+Deterministic logic is used where data is structured
+
+Works across multiple invoice layouts
+
+Easily extendable to new formats
+
+Produces consistent output for the UI
+
+🏁 Conclusion
+
+Swipe Invoice Automation is a robust and scalable solution that:
+
+Extracts invoice data from Excel, PDF, and images
+
+Uses AI intelligently and responsibly
+
+Handles missing data gracefully
+
+Highlights incomplete information clearly
+
+Solves as many real-world cases as possible
+
+This makes the system production-ready and reliable.
