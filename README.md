@@ -4,7 +4,7 @@ Swipe Invoice Automation is a generic AI-powered system designed to extract stru
 
 The solution is built to handle real-world invoice inconsistencies, missing fields, and varying file formats while maximizing successful extraction across different test cases.
 
-Objective
+#Objective
 
 The primary goal of this project is to:
 
@@ -16,7 +16,7 @@ and populate them into their respective tabs in the application interface using 
 
 If any required information is missing from the uploaded file, the system must still process the file and clearly highlight missing data instead of failing.
 
-Supported File Types
+#Supported File Types
 
 The application supports the following input formats:
 
